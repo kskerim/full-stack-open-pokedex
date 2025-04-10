@@ -1,4 +1,8 @@
-root: true
+name: eslint
+on: 
+  push:
+    branches:
+      - main
 env:
   browser: true
   node: true
