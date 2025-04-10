@@ -2,37 +2,34 @@ name: Test and Deploy
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  build_and_test:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: Install dependencies
         run: npm install
-
       - name: Run tests
-        run: npm test
-
-      - name: Build
-        run: npm run build
+        run: npm run test
 
   deploy:
-    needs: build_and_test
+    needs: test
     runs-on: ubuntu-latest
+    if: ${{ success() }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v20
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+      - name: Deploy to Vercel
+        run: |
+          npm install -g vercel
+          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm
