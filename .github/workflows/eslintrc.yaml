@@ -11,6 +11,7 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: '20'
-    - name: run
-      run: npm run eslint 
-
+    - name: Install dependences
+      run: npm install
+    - name: Run eslint
+      run: npm run eslint
